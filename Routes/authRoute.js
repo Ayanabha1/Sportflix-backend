@@ -6,6 +6,7 @@ const {
   loginValidation,
 } = require("../Validation/SchemaValidation");
 const jwt = require("jsonwebtoken");
+const jwt_decode = require("jwt-decode");
 
 async function generateToken(data) {
   //   console.log("YO");
@@ -21,7 +22,7 @@ async function generateToken(data) {
 
 // Register
 
-router.post("/addUser", async (req, res) => {
+router.post("/signup", async (req, res) => {
   // Checking for validation wrt the schema defined
   const { error } = registerValidation(req.body);
   if (error) {
@@ -54,6 +55,18 @@ router.post("/addUser", async (req, res) => {
     res.send({ user: newUser, message: "Signup success!", token: _token });
   } catch (err) {
     res.send(err);
+  }
+});
+
+// Get user details using jwt token
+
+router.get("/getUser", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split("Bearer ")[1];
+    const decoded = jwt_decode(token);
+    res.send(decoded);
+  } catch (error) {
+    res.status(404).send({ message: "User not found" });
   }
 });
 
