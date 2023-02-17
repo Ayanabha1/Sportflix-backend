@@ -6,10 +6,10 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 8000;
 require("dotenv/config");
 
-
 const mongoose = require("mongoose");
 
 const authRoute = require("./Routes/authRoute");
+const eventRoute = require("./Routes/eventRoute");
 
 app.use(cors());
 app.use(express.json());
@@ -26,9 +26,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/events", eventRoute);
 
 // Listening to the server
 server.listen(PORT, () => {
   console.log("Server is running on port " + PORT);
 });
-
