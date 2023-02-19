@@ -25,7 +25,6 @@ const eventSchema = new mongoose.Schema({
   },
   district: {
     type: String,
-    required: "District is reqired",
   },
   locatlity: {
     type: String,
@@ -37,15 +36,12 @@ const eventSchema = new mongoose.Schema({
   },
   pinCode: {
     type: String,
-    required: "PinCode name is reqired",
   },
   sector: {
     type: String,
-    required: "Sector name is reqired",
   },
   state: {
     type: String,
-    required: "State name is reqired",
   },
   latitude: {
     type: Number,
@@ -54,6 +50,13 @@ const eventSchema = new mongoose.Schema({
   longitude: {
     type: Number,
     required: "Longitude is required",
+  },
+  type: {
+    type: String,
+    required: "Game type is required",
+  },
+  participants: {
+    type: [String],
   },
 });
 
