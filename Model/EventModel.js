@@ -17,18 +17,15 @@ const eventSchema = new mongoose.Schema({
   },
   city: {
     type: String,
-    required: "City is reqired",
   },
   country: {
     type: String,
-    required: "Country is reqired",
   },
   district: {
     type: String,
   },
   locatlity: {
     type: String,
-    required: "Locatlity is reqired",
   },
   location: {
     type: String,
@@ -58,6 +55,17 @@ const eventSchema = new mongoose.Schema({
   participants: {
     type: [String],
   },
+  loc: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
 });
-
+eventSchema.index({ loc: "2dsphere" });
 module.exports = mongoose.model("events", eventSchema);
