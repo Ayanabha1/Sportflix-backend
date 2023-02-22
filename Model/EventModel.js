@@ -52,6 +52,10 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: "Game type is required",
   },
+  description: {
+    type: String,
+    required: "Description is required",
+  },
   participants: {
     type: [String],
   },
