@@ -11,6 +11,7 @@ const eventSchema = new mongoose.Schema({
   },
   max_players: {
     type: Number,
+    required: "Max players required",
   },
   min_age: {
     type: Number,
