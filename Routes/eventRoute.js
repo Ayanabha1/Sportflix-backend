@@ -7,12 +7,14 @@ const validateUser = require("./validateUser");
 // Route for adding event
 router.post("/add-event", validateUser, async (req, res) => {
   let incomingData = req.body;
+  const userId = req.body.userId;
   const eventDate = new Date(incomingData?.date);
   const currDate = new Date();
   if (currDate > eventDate) {
     res.status(400).send({ message: "Cannot add event in the past" });
     return;
   }
+  incomingData.host_id = userId;
   incomingData.loc = {
     type: "Point",
     coordinates: [incomingData.latitude, incomingData.longitude],
@@ -20,6 +22,10 @@ router.post("/add-event", validateUser, async (req, res) => {
   const eventData = new EventModel(req.body);
   try {
     const newEvent = await eventData.save();
+    await UserModel.updateOne(
+      { _id: userId },
+      { $push: { events: newEvent?._id, events_hosted: newEvent?._id } }
+    );
     res.send({ event: newEvent, message: "New event added" });
   } catch (err) {
     res.send(err);
@@ -54,6 +60,32 @@ router.get("/get-nearest-events", async (req, res) => {
   }
 });
 
+// route to get event by id
+
+router.get("/get-event-by-id", async (req, res) => {
+  try {
+    const eventId = req.query.eventId;
+    const event = await EventModel.findOne({ _id: eventId });
+    res.send({ event: event, message: "success" });
+  } catch (err) {
+    res.status(400).send({ message: "Event not found" });
+  }
+});
+
+// route to get user's registered events
+
+router.get("/get-registered-events", validateUser, async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const regEvents = await EventModel.find({
+      participants: { $in: [userId] },
+    });
+    res.send({ events: regEvents, message: "success" });
+  } catch (err) {
+    res.status(400).send({ message: "No registered event found" });
+  }
+});
+
 // route to join event
 
 router.post("/join-event", validateUser, async (req, res) => {
@@ -66,7 +98,7 @@ router.post("/join-event", validateUser, async (req, res) => {
     const user = await UserModel.findOne({ _id: userId });
     if (targetEvent?.min_age && user.age < targetEvent?.min_age) {
       res.status(400).send({
-        message: `You need to be under ${targetEvent?.min_age} years to register to this event`,
+        message: `You need to be older than ${targetEvent?.min_age} years to register to this event`,
       });
       return;
     }

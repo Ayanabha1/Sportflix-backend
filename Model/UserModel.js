@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema({
     default: [],
     required: "Events field is required",
   },
+  events_hosted: {
+    type: [String],
+    default: [],
+    required: "Events hosted field is required",
+  },
   Date: {
     type: Date,
     default: Date.now,
