@@ -5,12 +5,17 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  host_id: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     required: "Date is required",
   },
   max_players: {
     type: Number,
+    required: "Max players required",
   },
   min_age: {
     type: Number,
