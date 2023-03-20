@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // DB connection
-mongoose.connect(process.env.DB_CONNECTION, () => {
+mongoose.connect(process.env.DB_CONNECTION, { auto_reconnect: true }, () => {
   console.log("Yay! Database is connected");
 });
 

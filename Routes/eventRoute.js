@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const EventModel = require("../Model/EventModel");
 
+// Route to add an event
 router.post("/add-event", async (req, res) => {
   let incomingData = req.body;
   incomingData.loc = {
@@ -17,6 +18,8 @@ router.post("/add-event", async (req, res) => {
   }
 });
 
+// Route to get nearest events to a coordinate within a radius
+
 router.get("/get-nearest-events", async (req, res) => {
   try {
     const lat = req.query.lat;
@@ -29,7 +32,7 @@ router.get("/get-nearest-events", async (req, res) => {
             type: "Point",
             coordinates: [lat, lng],
           },
-          $maxDistance: 50000, //5KM
+          $maxDistance: 50000, //Radius - 5KM
           $minDistance: 0,
         },
       },
@@ -40,7 +43,21 @@ router.get("/get-nearest-events", async (req, res) => {
       message: "success",
     });
   } catch (err) {
-    res.status(400).send({ message: err.details[0].message });
+    res.status(400).send({ message: err?.details[0]?.message });
+  }
+});
+
+// Route to join event
+
+router.post("/join-event", async (req, res) => {
+  try {
+    const eventId = req.body.eventId;
+    // const date_of_reg = new Date();
+    const targetEvent = await EventModel.find();
+    // console.log(targetEvent);
+    res.send(targetEvent);
+  } catch (err) {
+    res.status(400).send({ message: err?.details[0]?.message });
   }
 });
 
