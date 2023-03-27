@@ -15,9 +15,28 @@ app.use(cors());
 app.use(express.json());
 
 // DB connection
-mongoose.connect(process.env.DB_CONNECTION, { auto_reconnect: true }, () => {
-  console.log("Yay! Database is connected");
-});
+
+const connectDB = () => {
+  const uri =
+    "mongodb+srv://r3x:ashabaririmbo@cluster0.g2c9e5a.mongodb.net/SportFlix?retryWrites=true&w=majority";
+  mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+};
+connectDB();
+
+// mongoose.connect(
+//   process.env.DB_CONNECTION,
+//   {
+//     useNewUrlParser: true,
+//     useFindAndModify: false,
+//     useUnifiedTopology: true,
+//   },
+//   () => {
+//     console.log("Yay! Database is connected");
+//   }
+// );
 
 // Routes and middlewares
 
