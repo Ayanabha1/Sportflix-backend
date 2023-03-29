@@ -1,8 +1,30 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const ChatModel = require("../Model/ChatModel");
 const EventModel = require("../Model/EventModel");
 const UserModel = require("../Model/UserModel");
 const validateUser = require("./validateUser");
+
+const changeDateFormat = (rawDate) => {
+  const d = new Date(rawDate);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = months[d.getMonth()];
+  const date = d.getDate();
+  return `${month} ${date}`;
+};
 
 // Route for adding event
 router.post("/add-event", validateUser, async (req, res) => {
@@ -26,6 +48,16 @@ router.post("/add-event", validateUser, async (req, res) => {
       { _id: userId },
       { $push: { events: newEvent?._id, events_hosted: newEvent?._id } }
     );
+    const newChatRoom = await ChatModel({
+      room_id: newEvent?._id,
+      name: newEvent?.location,
+      date: newEvent?.date,
+      type: newEvent?.type,
+      host_id: newEvent?.host_id,
+      participants: [userId],
+      messages: [],
+    });
+    await newChatRoom.save();
     res.send({ event: newEvent, message: "New event added" });
   } catch (err) {
     res.send(err);
@@ -57,6 +89,18 @@ router.get("/get-nearest-events", async (req, res) => {
     });
   } catch (err) {
     res.status(400).send({ message: err });
+  }
+});
+
+// route to get all hosted events
+
+router.get("/get-hosted-events", validateUser, async (req, res) => {
+  try {
+    const userId = req.body?.userId;
+    const hostedEvents = await EventModel.find({ host_id: userId });
+    res.send({ hostedEvents: hostedEvents, message: "success" });
+  } catch (err) {
+    res.status(400).send({ message: "Event not found" });
   }
 });
 
@@ -120,6 +164,13 @@ router.post("/join-event", validateUser, async (req, res) => {
               $push: { events: eventId },
             }
           );
+          await ChatModel.updateOne(
+            { room_id: eventId },
+            {
+              $push: { participants: userId },
+            }
+          );
+
           res.send({ message: "Registered to event successfully" });
         } else {
           res.status(400).send({ message: "You are already registered" });
@@ -139,6 +190,56 @@ router.post("/join-event", validateUser, async (req, res) => {
       .status(400)
       .send({ message: "Something went wrong ... please try again" });
   }
+});
+
+// route to get rooms user joined in
+
+router.get("/get-user-rooms", validateUser, async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const rooms = await ChatModel.find({
+      participants: { $in: [userId] },
+    });
+    res.send({ rooms: rooms, message: "success" });
+  } catch (err) {
+    res.status(400).send({ message: "No registered event found" });
+  }
+});
+
+let currentRoom;
+
+io.on("connection", (socket) => {
+  socket.on("join-room", async (room, cb) => {
+    if (currentRoom) {
+      socket.leave(room);
+    }
+    const roomInfo = await ChatModel.findOne({ room_id: room });
+    cb({
+      roomInfo: roomInfo,
+    });
+    socket.join(room);
+    currentRoom = room;
+  });
+
+  socket.on("send-message", async (data) => {
+    const room = data.room;
+    const newChat = {
+      sender_name: data.sender.name,
+      sender_id: data.sender.userId,
+      date: data.date,
+      time: data.time,
+      message: data.message,
+    };
+    socket.broadcast.to(room).emit("receive-message", newChat);
+    try {
+      await ChatModel.updateOne(
+        { room_id: room },
+        { $push: { messages: newChat } }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });
 
 module.exports = router;
