@@ -41,6 +41,7 @@ router.post("/add-event", validateUser, async (req, res) => {
     type: "Point",
     coordinates: [incomingData.latitude, incomingData.longitude],
   };
+
   const eventData = new EventModel(req.body);
   try {
     const newEvent = await eventData.save();

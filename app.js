@@ -1,9 +1,11 @@
+const path = require("path");
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8000;
+const axios = require("axios");
 require("dotenv/config");
 
 // Socket setup
@@ -36,14 +38,18 @@ const connectDB = () => {
   console.log("CONNECTED");
 };
 
-// Routes and middlewares
-
-app.get("/", (req, res) => {
-  res.send("Heyy whatsup This is Ayanabha Misra");
-});
-
+// Routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/events", eventRoute);
+
+// serving the client static files
+app.use(express.static("client/build"));
+// app.get("/", (req, res) => {
+//   res.send("Heyy whatsup This is Ayanabha Misra");
+// });
+app.get("/*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+});
 
 // Listening to the server
 server.listen(PORT, () => {
