@@ -38,8 +38,12 @@ const connectDB = () => {
 
 // Routes and middlewares
 
+// serving the client static files
+// app.use(express.static("client/build"));
 app.get("/", (req, res) => {
-  res.send("Heyy whatsup This is Ayanabha Misra");
+  res.send(
+    "Sportflix backend: you better have the access or I'll hunt you down"
+  );
 });
 
 app.use("/api/v1/auth", authRoute);
