@@ -39,15 +39,18 @@ const connectDB = () => {
 // Routes and middlewares
 
 // serving the client static files
-// app.use(express.static("client/build"));
-app.get("/", (req, res) => {
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/events", eventRoute);
+app.get("/check", (req, res) => {
   res.send(
     "Sportflix backend: you better have the access or I'll hunt you down"
   );
 });
 
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/events", eventRoute);
+app.use(express.static("client/build"));
+app.get("/*", (req, res) => {
+  res.sendFile(__dirname + "/client/build/index.html");
+});
 
 // Listening to the server
 server.listen(PORT, () => {
