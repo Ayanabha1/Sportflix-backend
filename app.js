@@ -33,7 +33,7 @@ const connectDB = () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  console.log("CONNECTED TO DB");
+  console.log("CONNECTED TO Database");
 };
 
 // Routes and middlewares
