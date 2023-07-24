@@ -47,9 +47,10 @@ app.get("/check", (req, res) => {
   );
 });
 
-app.use(express.static("Client/build"));
+app.use(express.static("build"));
+
 app.get("/*", (req, res) => {
-  res.sendFile(__dirname + "/Client/build/index.html");
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 // Listening to the server
