@@ -1,0 +1,87 @@
+service: sportflix
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+functions:
+  # Lambda functions to handle auth routes
+  createUser:
+    handler: src/Handlers/AuthHandlers/createUser.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/signup
+          method: POST
+  login:
+    handler: src/Handlers/AuthHandlers/login.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/login
+          method: POST
+  getUser:
+    handler: src/Handlers/AuthHandlers/getUser.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/getUser
+          method: GET
+
+  # Lambda functions to handle event routes
+  addEvent:
+    handler: src/Handlers/EventHandlers/addEvent.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/add-event
+          method: POST
+  joinEvent:
+    handler: src/Handlers/EventHandlers/joinEvent.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/join-event
+          method: POST
+  getUserRooms:
+    handler: src/Handlers/EventHandlers/getUserRooms.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/get-user-rooms
+          method: GET
+  getEventById:
+    handler: src/Handlers/EventHandlers/getEventById.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/get-event-by-id
+          method: GET
+  getRegisteredEvents:
+    handler: src/Handlers/EventHandlers/getRegisteredEvents.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/get-registered-events
+          method: GET
+  getHostedEvents:
+    handler: src/Handlers/EventHandlers/getHostedEvents.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/get-hosted-events
+          method: GET
+  getNearestEvents:
+    handler: src/Handlers/EventHandlers/getNearestEvents.handler
+    events:
+      - httpApi:
+          path: /api/v1/events/get-nearest-events
+          method: GET
+
+  # Lambda functions to handle websocket connections
+  websocketHandler:
+    handler: src/Handlers/ChatHandlers/websocketHandler.handler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
