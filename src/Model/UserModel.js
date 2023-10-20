@@ -6,13 +6,19 @@ const validateEmail = (email) => {
 };
 
 const userSchema = new mongoose.Schema({
+  is_google_accnt: {
+    type: Boolean,
+    default: false,
+  },
+  picture: {
+    type: String,
+  },
   name: {
     type: String,
     required: true,
   },
   dob: {
     type: Date,
-    required: true,
   },
   age: {
     type: Number,

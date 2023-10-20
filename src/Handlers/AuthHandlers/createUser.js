@@ -43,7 +43,6 @@ module.exports.handler = async (event, context) => {
 
   // Checking for validation wrt the schema defined
   const reqObj = JSON.parse(event.body);
-
   const { error } = registerValidation.validate(reqObj);
   if (error) {
     return sendError(400, { message: error.details[0].message });
@@ -62,20 +61,25 @@ module.exports.handler = async (event, context) => {
     const hashedPass = await bcrypt.hash(reqObj.password, salt);
 
     // Creating a new user
-    const age = calculateAge(new Date(reqObj.dob));
+
     const trimmedName = reqObj.name.trim();
     const trimmedEmail = reqObj.email.trim();
-    const user = new userModel({
+    let age;
+    if (reqObj?.dob) {
+      age = calculateAge(new Date(reqObj.dob));
+    }
+    let user_obj = {
       name: trimmedName,
       email: trimmedEmail,
       password: hashedPass,
-      dob: reqObj.dob,
-      age: age,
-    });
-    console.log(user);
+    };
+    if (reqObj?.dob) {
+      user_obj.dob = reqObj.dob;
+      user_obj.age = age;
+    }
+    const user = new userModel(user_obj);
     const newUser = await user.save();
-    console.log(newUser);
-    // // Generate the jwt Token
+    // Generate the jwt Token
     const _token = await generateToken(newUser);
     return sendResponse({
       user: newUser,

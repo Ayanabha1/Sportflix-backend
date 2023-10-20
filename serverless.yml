@@ -24,6 +24,12 @@ functions:
       - httpApi:
           path: /api/v1/auth/login
           method: POST
+  googleLogin:
+    handler: src/Handlers/AuthHandlers/googleLogin.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/googleLogin
+          method: POST
   getUser:
     handler: src/Handlers/AuthHandlers/getUser.handler
     events:
