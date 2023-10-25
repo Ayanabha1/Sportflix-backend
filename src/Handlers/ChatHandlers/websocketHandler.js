@@ -12,6 +12,8 @@ const gatewayClient = new AWS.ApiGatewayManagementApi({
 });
 
 const sendToOne = async (connectionId, payload) => {
+  // console.log(connectionId);
+  // console.log(payload);
   return gatewayClient
     .postToConnection({
       ConnectionId: connectionId,
@@ -116,6 +118,7 @@ module.exports.handler = async (event, context) => {
     const payload = JSON.parse(event.body);
     switch (payload.action) {
       case "join-room":
+        // console.log("Trying to join");
         await joinRoomHandler(connectionId, payload.roomId);
         break;
       case "send-message":
