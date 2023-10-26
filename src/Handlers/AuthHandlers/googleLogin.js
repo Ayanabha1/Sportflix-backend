@@ -80,7 +80,6 @@ module.exports.handler = async (event, context) => {
   try {
     const db = await connectToDatabase();
     const reqObj = JSON.parse(event.body);
-    console.log(reqObj);
     if (!reqObj?.credential) {
       return sendError(400, { message: "Not a google account" });
     }

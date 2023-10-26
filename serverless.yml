@@ -36,6 +36,12 @@ functions:
       - httpApi:
           path: /api/v1/auth/getUser
           method: GET
+  changeDetails:
+    handler: src/Handlers/AuthHandlers/changeDetails.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/changeDetails
+          method: POST
 
   # Lambda functions to handle event routes
   addEvent:
