@@ -42,6 +42,12 @@ functions:
       - httpApi:
           path: /api/v1/auth/changeDetails
           method: POST
+  uploadImage:
+    handler: src/Handlers/AuthHandlers/uploadProfilePic.handler
+    events:
+      - httpApi:
+          path: /api/v1/auth/uploadPP
+          method: POST
 
   # Lambda functions to handle event routes
   addEvent:
