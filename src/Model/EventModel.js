@@ -9,6 +9,9 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  pictures: {
+    type: [String],
+  },
   date: {
     type: Date,
     required: "Date is required",

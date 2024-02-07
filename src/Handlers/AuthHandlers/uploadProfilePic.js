@@ -47,7 +47,7 @@ module.exports.handler = async (event, context) => {
       ContentType: file.contentType,
     };
 
-    // // Upload the image to S3
+    // Upload the image to S3
     const s3Res = await s3.upload(params).promise();
     const imageUrl = s3Res.Location;
     await users.updateOne({ _id: userId }, { $set: { picture: imageUrl } });
