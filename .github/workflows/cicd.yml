@@ -26,11 +26,13 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           echo "LOCATION_IQ_API_KEY=${{ secrets.LOCATION_IQ_API_KEY }}" >> .env
           echo "AWS_API_ENDPOINT=${{ secrets.AWS_API_ENDPOINT }}" >> .env
+          echo "IMAGE_S3_BUCKET=${{ secrets.IMAGE_S3_BUCKET }}" >> .env
         env:
           DB_URI: ${{ secrets.DB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           LOCATION_IQ_API_KEY: ${{ secrets.LOCATION_IQ_API_KEY }}
           AWS_API_ENDPOINT: ${{ secrets.AWS_API_ENDPOINT }}
+          IMAGE_S3_BUCKET: ${{ secrets.IMAGE_S3_BUCKET }}
 
       - name: Deploy to AWS
         run: npx serverless deploy
